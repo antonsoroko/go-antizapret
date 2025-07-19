@@ -284,7 +284,7 @@ func saveConfigToFile(filePath string, cfg *AntizapretConfig) error {
 
 // Build Antizapret config and store it in cache
 func loadConfig() (*AntizapretConfig, error) {
-	configMutex.RLock()
+	configMutex.RLock() // Acquire read lock
 	if _config != nil && time.Since(_config.CreatedAt) <= CACHE_TTL {
 		// Config is already loaded in memory and not expired
 		configMutex.RUnlock()
@@ -627,24 +627,24 @@ UNZLP_START:
 	}
 
 	// Debug info
-	fmt.Printf("Number of blocked IP addresses = %d\n", len(dIPAddr))
+	log.Printf("Number of blocked IP addresses in Antizapret PAC file: %d\n", len(dIPAddr))
 	// for _, IPhex := range dIPAddr {
 	// 	ipBytes := make([]byte, 4)
 	// 	binary.BigEndian.PutUint32(ipBytes, IPhex)
-	// 	fmt.Println(net.IP(ipBytes).String())
+	// 	log.Println(net.IP(ipBytes).String())
 	// }
 	len_domains := 0
 	for _, dmnEntry := range domains {
-		// fmt.Printf("domain=%s\n", dmnEntry.TLD)
+		// log.Printf("domain=%s\n", dmnEntry.TLD)
 		for _, lenEntry := range dmnEntry.Lengths {
-			// fmt.Printf("dcnt=%d\n", lenEntry.Length)
+			// log.Printf("dcnt=%d\n", lenEntry.Length)
 			// for _, fragment := range lenEntry.Data {
-			// 	fmt.Println(patternRestore(fragment, patternsDomainsLZP) + "." + dmnEntry.TLD)
+			// 	log.Println(patternRestore(fragment, patternsDomainsLZP) + "." + dmnEntry.TLD)
 			// }
 			len_domains += len(lenEntry.Data)
 		}
 	}
-	fmt.Printf("Number of blocked domains = %d\n", len_domains)
+	log.Printf("Number of blocked domains in Antizapret PAC file: %d\n", len_domains)
 
 	_config = &AntizapretConfig{
 		CreatedAt:                time.Now(),
@@ -777,7 +777,7 @@ func (ap *AntizapretProxy) Detect(host string) string {
 		}
 		// Debug print IP hex
 		// if ipUint32 != 0 {
-		// 	fmt.Printf("iphex=%d\n", ipUint32)
+		// 	log.Printf("iphex=%d\n", ipUint32)
 		// }
 	}
 
